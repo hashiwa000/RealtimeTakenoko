@@ -21,7 +21,7 @@ object Application extends Controller {
     // log the message to stdout and send response back to client
     val in = Iteratee.foreach[String] {
       msg =>
-        println(msg)
+        println("received message is " + msg)
 
         // the Enumerator returned by Concurrent.broadcast subscribes to the channel and will
         // receive the pushed messages
