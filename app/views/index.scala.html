@@ -1,7 +1,79 @@
 @(message: String)
 
-@main("Welcome to Play") {
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Realtime TAKENOKO!</title>
+    <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+    <script type="text/javascript">
+      var uri = "ws://localhost:9000/websock";
+      var webSocket = null;
 
-    @play20.welcome(message)
+      function init() {
+          $("[data-name='message']").keypress(press);
+          open();
+      }
 
-}
+      function open() {
+        if (webSocket == null) {
+            webSocket = new WebSocket(uri);
+            webSocket.onopen = onOpen;
+            webSocket.onmessage = onMessage;
+            webSocket.onclose = onClose;
+            webSocket.onerror = onError;
+        }
+      }
+
+      function onOpen(event) {
+        chat("接続しました。");
+      }
+
+      function onMessage(event) {
+        if (event && event.data) {
+          console.log("get message.");
+          chat(event.data);
+        }
+      }
+
+      function onError(event) {
+        chat("エラーが発生しました。");
+      }
+
+      function onClose(event) {
+        chat("切断しました。3秒後に再接続します。(" + event.code + ")");
+        webSocket = null;
+        setTimeout("open()", 3000);
+      }
+
+      function press(event) {
+        if (event && event.which == 13) {
+          var message = $("[data-name='message']").val();
+          if (message && webSocket) {
+            webSocket.send("" + message);
+            $("[data-name='message']").val("");
+            console.log("send message.");
+          }
+        }
+      }
+
+      function chat(message) {
+        var chats = $("[data-name='chat']").find("div");
+        while (chats.length >= 100) {
+            chats = chats.last().remove();
+        }
+        var msgtag = $("<div>").text(message);
+        $("[data-name='chat']").prepend(msgtag);
+      }
+
+      $(init);
+    </script>
+  </head>
+  <body>
+    <input type="text" data-name="message" size="100" />
+    <hr />
+    <div data-name="chat"></div>
+  </body>
+</html>
+
