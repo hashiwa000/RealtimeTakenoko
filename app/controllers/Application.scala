@@ -23,19 +23,20 @@ object Application extends Controller {
 
     // register
     connections ::= channel
+    println("** connected : " + channel)
 
     // log the message to stdout and send response back to client
     val in = Iteratee.foreach[String] (msg => {
-      println("received message is " + msg)
+      println("** received message is [" + msg + "] from " + channel)
 
       // the Enumerator returned by Concurrent.broadcast subscribes to the channel and will
       // receive the pushed messages
-      // push is called for each connections
-      connections.foreach(_ push("I received your message: " + msg))
+      // 'push' is called for each live connections
+      connections.foreach(_ push(msg))
     }).map(_ => {
       // unregister
       connections = connections.filter(_ != channel)
-      println("disconnected")
+      println("** disconnected : " + channel)
     })
 
     (in,out)
