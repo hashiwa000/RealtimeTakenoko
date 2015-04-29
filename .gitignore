@@ -1,0 +1,6 @@
+/target/
+/lib/*
+/logs/*
+/project/project/
+/project/target/
+
