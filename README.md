@@ -1,0 +1,2 @@
+# RealtimeTakenoko
+TakenokoNokki game.
