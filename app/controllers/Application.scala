@@ -15,7 +15,7 @@ object Application extends Controller {
   def socket = WebSocket.using[String] { request =>
 
     // Concurrent.broadcast returns (Enumerator, Concurrent.Channel)
-    // val (out, channel) = Concurrent.broadcast[String]
+    val (out, channel) = Concurrent.broadcast[String]
 
     // log the message to stdout and send response back to client
     val in = Iteratee.foreach[String] {
@@ -27,7 +27,8 @@ object Application extends Controller {
     }
 
     // Send a single 'Hello!' message and close
-    val out = Enumerator("Hello!").andThen(Enumerator.eof)
+    // val out = Enumerator("Hello!").andThen(Enumerator.eof)
+
 
     (in,out)
   }
